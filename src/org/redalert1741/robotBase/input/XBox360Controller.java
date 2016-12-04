@@ -1,10 +1,8 @@
 package org.redalert1741.robotBase.input;
 
-import edu.wpi.first.wpilibj.DriverStation;
-
-public class Gamepad 
+public class XBox360Controller extends Controller
 {
-    public enum AxisType
+	public enum AxisType
     {
         LeftXAxis, LeftYAxis, RightXAxis, RightYAxis, LTrigger, RTrigger
     }
@@ -31,16 +29,11 @@ public class Gamepad
 		static final int LEFT_ANALOG_STICK_BUTTON = 11;
 		static final int RIGHT_ANALOG_STICK_BUTTON = 12;
 	}
-
-    protected DriverStation ap_ds;
-    protected int a_port;
-
-    
-    
-	Gamepad(int port)
+	
+	XBox360Controller(int port)
 	{
-	    a_port = port;
-	    ap_ds = DriverStation.getInstance();
+		super(port);
+		setMonitor(new int[]{12, 8});
 	}
 	
 	/**
@@ -74,18 +67,7 @@ public class Gamepad
 	{
 	    return getRawAxis(AxisNumber.RIGHT_Y_AXIS_NUM);
 	}
-
-	/**
-	 * Get the value of the axis.
-	 *
-	 * @param axis The axis to read [1-6].
-	 * @return The value of the axis.
-	 */
-	float getRawAxis(int axis)
-	{
-	    return (float) ap_ds.getStickAxis(a_port, (int) axis);
-	}
-
+	
 	/**
 	 * Return the axis determined by the argument.
 	 *
@@ -109,21 +91,6 @@ public class Gamepad
 	            //wpi_fatal(BadJoystickAxis);
 	            return (float) 0.0;
 	    }
-	}
-
-	/**
-	 * Get the button value for buttons 1 through 12.
-	 *
-	 * The buttons are returned in a single 16 bit value with one bit representing
-	 * the state of each button. The appropriate button is returned as a boolean
-	 * value.
-	 *
-	 * @param button The button number to be read.
-	 * @return The state of the button.
-	 **/
-	boolean getNumberedButton(int button)
-	{
-	    return ((0x1 << (button-1)) & ap_ds.getStickButtons(a_port)) != 0;
 	}
 	
 	/**
@@ -158,13 +125,13 @@ public class Gamepad
     boolean getRightTrigger() { return getNumberedButton(9); }
     float getLTriggerAxis() { return getRawAxis(AxisNumber.LEFT_TRIGGER_AXIS); }
     float getRTriggerAxis() { return getRawAxis(AxisNumber.RIGHT_TRIGGER_AXIS); }
-
+    
 	/*
 	 * Returns a DPad Direction, not degrees.
 	 */
 	DPadDirection getDPad()
 	{
-	    int pos = ap_ds.getStickPOV(a_port, 0);
+	    int pos = ap_ds.getStickPOV(getControllerNumber(), 0);
 
 	    if (pos == 315)
 	        return DPadDirection.UpLeft;
@@ -185,13 +152,12 @@ public class Gamepad
 
 	  return DPadDirection.Center;
 	}
-
-
+	
 	/*
 	 * AKA getDpadRaw()
 	 */
 	int getPOV()
 	{
-		return ap_ds.getStickPOV(a_port, 0);
+		return ap_ds.getStickPOV(getControllerNumber(), 0);
 	}
 }
